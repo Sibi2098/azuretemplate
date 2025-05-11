@@ -1,0 +1,27 @@
+parameters:
+  - name: mainproject
+    type: string
+    default: '**/*.csproj'
+  - name:
+    type:
+    default:  
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Build the code
+    inputs:
+      command: 'build'
+      projects: ${{ parameters.mainproject}}
+  - task: DotNetCoreCLI@2
+    displayName: publish nopCommerce
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: ${{ parameters.mainproject}}
+      arguments: '-o $(Build.ArtifactStagingDirectory)/Output'
+      zipAfterPublish: true
+      modifyOutputPath: true
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: "$(Build.ArtifactStagingDirectory)/output"
+      artifactName: $(Build.Repository.Name)
